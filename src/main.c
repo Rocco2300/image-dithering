@@ -49,7 +49,22 @@ typedef struct
 
 } Image;
 
-Image* create_image()
+void destroy_image(Image* image)
+{
+    if (image == NULL)
+        return;
+
+    if (image->header != NULL)
+        free(image->header);
+
+    if (image->dibHeader != NULL)
+        free(image->dibHeader);
+    
+    if (image->pixels != NULL)
+        free(image->pixels);
+}
+
+Image* create_empty_image()
 {
     Image* image;
     image = malloc(sizeof(Image));
@@ -58,7 +73,18 @@ Image* create_image()
         return NULL;
     
     image->header = malloc(sizeof(ImageHeader));
+    if (image->header == NULL)
+    {
+        destroy_image(image);
+        return NULL;
+    }
+
     image->dibHeader = malloc(sizeof(DIBHeader));
+    if (image->dibHeader == NULL)
+    {
+        destroy_image(image);
+        return NULL;
+    }
 
     return image;
 }
@@ -94,7 +120,7 @@ void load_image(const char* path, Image* image)
 
 int main()
 {
-    Image* image = create_image();
+    Image* image = create_empty_image();
     load_image("test.bmp", image);
 
     int w = image->dibHeader->width;
