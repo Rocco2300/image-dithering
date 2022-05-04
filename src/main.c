@@ -1,133 +1,31 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <math.h>
 
-#pragma pack(push, 1)
-
-typedef struct 
-{
-    uint16_t header;
-    uint32_t size;
-    uint16_t reserved1;
-    uint16_t reserved2;
-    uint32_t startingOffset;
-
-} ImageHeader;
-
-typedef struct
-{
-    uint32_t headerSize;
-    uint32_t width;
-    uint32_t height;
-    uint16_t colorPlanes;
-    uint16_t bitsPerPixel;
-    uint32_t compression;
-    uint32_t imageSize;
-    uint32_t horizontalResolution;
-    uint32_t verticalResolution;
-    uint32_t colorNumber;
-    uint32_t importantColors;
-
-} DIBHeader;
-
-typedef struct
-{
-    uint8_t b;
-    uint8_t g;
-    uint8_t r;
-
-} Pixel;
-
-
-#pragma pack(pop)
-
-typedef struct
-{
-    ImageHeader* header;
-    DIBHeader* dibHeader;
-    Pixel* pixels;
-
-} Image;
-
-void destroy_image(Image* image)
-{
-    if (image == NULL)
-        return;
-
-    if (image->header != NULL)
-        free(image->header);
-
-    if (image->dibHeader != NULL)
-        free(image->dibHeader);
-    
-    if (image->pixels != NULL)
-        free(image->pixels);
-}
-
-Image* create_empty_image()
-{
-    Image* image;
-    image = malloc(sizeof(Image));
-
-    if (image == NULL)
-        return NULL;
-    
-    image->header = malloc(sizeof(ImageHeader));
-    if (image->header == NULL)
-    {
-        destroy_image(image);
-        return NULL;
-    }
-
-    image->dibHeader = malloc(sizeof(DIBHeader));
-    if (image->dibHeader == NULL)
-    {
-        destroy_image(image);
-        return NULL;
-    }
-
-    return image;
-}
-
-void load_image(const char* path, Image* image)
-{
-    FILE* file;
-    file = fopen(path, "rb");
-
-    fread(image->header, 14, 1, file);
-    fread(image->dibHeader, 40, 1, file);
-
-    int width = image->dibHeader->width;
-    int height = image->dibHeader->height;
-    int size = width * height;
-    image->pixels = malloc(sizeof(Pixel) * size);
-
-    int padding;
-    if ((sizeof(Pixel) * width) % 4 == 0)
-        padding = 0;
-    else
-        padding = 4 - (sizeof(Pixel) * width) % 4;
-
-    for (int i = height - 1; i >= 0; i--)
-    {
-        int offset = i * width;
-        fread(image->pixels + offset, sizeof(Pixel) * width, 1, file);
-        fseek(file, sizeof(Pixel) * padding, SEEK_CUR);
-    }
-
-    fclose(file);
-}
+#include "Image.h"
 
 int main()
 {
-    Image* image = create_empty_image();
-    load_image("test.bmp", image);
+    Image* image = load_image("bunny.bmp");
 
     int w = image->dibHeader->width;
     int h = image->dibHeader->height;
 
-    printf("%d %d\n", w, h);
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            Pixel* pixel = pixel_at(image, x, y);
+            // float factor = 3.f;
+            // pixel->r = round(factor * pixel->r / 255.f) * (255 / factor);
+            // pixel->g = round(factor * pixel->g / 255.f) * (255 / factor);
+            // pixel->b = round(factor * pixel->b / 255.f) * (255 / factor);
 
-    printf("%d %d %d", image->pixels[0].r, image->pixels[0].g, image->pixels[0].b);
+            pixel->r = 255 - pixel->r;
+            pixel->g = 255 - pixel->g;
+            pixel->b = 255 - pixel->b;
+        }
+    }
+
+    save_image("bunny1.bmp", image);
     return 0;
 }
