@@ -49,6 +49,7 @@ typedef struct
 } Image;
 
 Image* create_empty_image();
+Image* create_image(int w, int h);
 Image* load_image(const char* path);
 void destroy_image(Image* image);
 void save_image(const char* path, Image* image);
