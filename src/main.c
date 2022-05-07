@@ -29,14 +29,14 @@ Image* get_white_img()
 
 int main()
 {
-    Image* white_image = get_white_img();
-    // Image* image = load_image("Circle1.bmp");
+    // Image* white_image = get_white_img();
+    Image* image = load_image("lena.bmp");
 
     // quantize(image, 4);
-    // grayscale(image);
-    // dither(image);
-    light_test(white_image);
+    grayscale(image);
+    dither(image);
+    // light_test(white_image);
 
-    save_image("dither.bmp", white_image);
+    save_image("dither1.bmp", image);
     return 0;
 }

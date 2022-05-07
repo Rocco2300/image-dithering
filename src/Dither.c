@@ -23,7 +23,7 @@ int mat8[8][8] =
     {63, 31, 55, 23, 61, 29, 53, 21}
 };
 
-void dither(Image* image)
+void dither_grayscale_4x4(Image* image)
 {
     int w = image->dibHeader->width;
     int h = image->dibHeader->height;
@@ -40,10 +40,27 @@ void dither(Image* image)
             pixel->r = newValue;
             pixel->g = newValue;
             pixel->b = newValue;
-            
-            // pixel->r = nearest_palette_col(pixel->r + (1.f/4) * (((1.f/16) * mat[x % 4][y % 4]) - 1.f/2));
-            // pixel->g = nearest_palette_col(pixel->g + (1.f/4) * (((1.f/16) * mat[x % 4][y % 4]) - 1.f/2));
-            // pixel->b = nearest_palette_col(pixel->b + (1.f/4) * (((1.f/16) * mat[x % 4][y % 4]) - 1.f/2));
+        }
+    }
+}
+
+void dither_grayscale_8x8(Image* image)
+{
+    int w = image->dibHeader->width;
+    int h = image->dibHeader->height;
+
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            Pixel* pixel = pixel_at(image, x, y);
+
+            float normValue = pixel->r / 255.f;
+            int newValue = (normValue < ((1.f/64) * (float)mat8[x % 8][y % 8])) ? 0 : 255;
+
+            pixel->r = newValue;
+            pixel->g = newValue;
+            pixel->b = newValue;
         }
     }
 }
