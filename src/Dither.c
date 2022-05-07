@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-int mat[4][4] = 
+int mat4[4][4] = 
 {
     {0, 8, 2, 10},
     {12, 4, 14, 6},
@@ -10,6 +10,18 @@ int mat[4][4] =
     {15, 7, 13, 5}
 };
 
+
+int mat8[8][8] = 
+{
+    {0, 32, 8, 40, 2, 34, 10, 42},
+    {48, 16, 56, 24, 50, 18, 58, 26},
+    {12, 44, 4, 36, 14, 46, 6, 38},
+    {60, 28, 52, 20, 62, 30, 54, 22},
+    {3, 35, 11, 43, 1, 33, 9, 41},
+    {51, 19, 59, 27, 49, 17, 57, 25},
+    {15, 47, 7, 39, 13, 45, 5, 37},
+    {63, 31, 55, 23, 61, 29, 53, 21}
+};
 
 void dither(Image* image)
 {
@@ -23,7 +35,7 @@ void dither(Image* image)
             Pixel* pixel = pixel_at(image, x, y);
 
             float normValue = pixel->r / 255.f;
-            int newValue = (normValue < ((1.f/16) * (float)mat[x % 4][y % 4])) ? 0 : 255;
+            int newValue = (normValue < ((1.f/16) * (float)mat4[x % 4][y % 4])) ? 0 : 255;
 
             pixel->r = newValue;
             pixel->g = newValue;
@@ -59,7 +71,7 @@ void light_test(Image* image)
             int x_relative_to_light = abs(x - 30) % 4;
             int y_relative_to_light = abs(y - 30) % 4;
 
-            int temp = (pixel_distance_from_light / light_power <= mat[x_relative_to_light][y_relative_to_light] || 
+            int temp = (pixel_distance_from_light / light_power <= mat4[x_relative_to_light][y_relative_to_light] || 
                 pixel_distance_from_light < light_power * 8) ? 1 : 0;
             pixel->r = pixel->r * temp;
             pixel->g = pixel->g * temp;
