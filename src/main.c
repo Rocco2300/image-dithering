@@ -32,9 +32,7 @@ int main()
     // Image* white_image = get_white_img();
     Image* image = load_image("lena.bmp");
 
-    // quantize(image, 4);
-    grayscale(image);
-    dither(image);
+    dither_grayscale_8x8(image);
     // light_test(white_image);
 
     save_image("dither1.bmp", image);

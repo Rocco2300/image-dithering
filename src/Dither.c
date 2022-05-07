@@ -34,7 +34,8 @@ void dither_grayscale_4x4(Image* image)
         {
             Pixel* pixel = pixel_at(image, x, y);
 
-            float normValue = pixel->r / 255.f;
+            int value = (pixel->r + pixel->g + pixel->b) / 3;
+            float normValue = value / 255.f;
             int newValue = (normValue < ((1.f/16) * (float)mat4[x % 4][y % 4])) ? 0 : 255;
 
             pixel->r = newValue;
@@ -55,7 +56,8 @@ void dither_grayscale_8x8(Image* image)
         {
             Pixel* pixel = pixel_at(image, x, y);
 
-            float normValue = pixel->r / 255.f;
+            int value = (pixel->r + pixel->g + pixel->b) / 3;
+            float normValue = value / 255.f;
             int newValue = (normValue < ((1.f/64) * (float)mat8[x % 8][y % 8])) ? 0 : 255;
 
             pixel->r = newValue;
