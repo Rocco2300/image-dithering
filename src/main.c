@@ -51,12 +51,14 @@ Image* get_gradient_img()
 
 int main()
 {
-    Image* image = get_gradient_img();
-    // Image* image = load_image("lena.bmp");
+    // Image* image = get_gradient_img();
+    Image* image = load_image("lena.bmp");
 
-    dither_grayscale_2x2(image);
+    // quantize(image, 3);
+    dither_color_8x8(image);
+    // dither_grayscale_2x2(image);
     // light_test(white_image);
 
-    save_image("dither3.bmp", image);
+    save_image("lena_dither.bmp", image);
     return 0;
 }

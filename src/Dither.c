@@ -1,4 +1,5 @@
 #include "Dither.h"
+#include "Effects.h"
 
 #include <math.h>
 
@@ -28,6 +29,36 @@ int mat8[8][8] =
     {15, 47, 7, 39, 13, 45, 5, 37},
     {63, 31, 55, 23, 61, 29, 53, 21}
 };
+
+// Coloured dithering
+
+void dither_color_8x8(Image* image)
+{
+    int w = image->dibHeader->width;
+    int h = image->dibHeader->height;
+
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            Pixel* pixel = pixel_at(image, x, y);
+
+            double normR = pixel->r / 255.f;
+            double normG = pixel->g / 255.f;
+            double normB = pixel->b / 255.f;
+
+            normR += 1.f/3 * ((1.f/64) * mat8[x % 8][y % 8] - (1.f/2));
+            normG += 1.f/3 * ((1.f/64) * mat8[x % 8][y % 8] - (1.f/2));
+            normB += 1.f/3 * ((1.f/64) * mat8[x % 8][y % 8] - (1.f/2));
+
+            pixel->r += 1.f / 3 * mat8[x%8][y%8];
+            pixel->g += 1.f / 3 * mat8[x%8][y%8];
+            pixel->b += 1.f / 3 * mat8[x%8][y%8];
+
+            quantize_pixel(pixel, 3);
+        }
+    }
+}
 
 // Grayscale dithering
 

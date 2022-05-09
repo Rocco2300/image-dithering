@@ -2,6 +2,13 @@
 
 #include <math.h>
 
+void quantize_pixel(Pixel* pixel, int factor)
+{
+    pixel->r = round(factor * pixel->r / 255.f) * (255.f / factor);
+    pixel->g = round(factor * pixel->g / 255.f) * (255.f / factor);
+    pixel->b = round(factor * pixel->b / 255.f) * (255.f / factor);
+}
+
 void grayscale(Image* image)
 {
     int w = image->dibHeader->width;
@@ -30,11 +37,7 @@ void quantize(Image* image, int factor)
     {
         for (int x = 0; x < w; x++)
         {
-            Pixel* pixel = pixel_at(image, x, y);
-
-            pixel->r = round(factor * pixel->r / 255.f) * (255.f / factor);
-            pixel->g = round(factor * pixel->g / 255.f) * (255.f / factor);
-            pixel->b = round(factor * pixel->b / 255.f) * (255.f / factor);
+            quantize_pixel(pixel_at(image, x, y), factor);
         }
     }
 }

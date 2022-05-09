@@ -10,7 +10,10 @@ extern int mat8[8][8];
 int distance(int x1, int y1, int x2, int y2);
 void light_test(Image* image);
 
-// Grayscale dithering
+// Coloroured bayer dithering
+void dither_color_8x8(Image* image);
+
+// Grayscale bayer dithering
 void dither_grayscale_2x2(Image* image);
 void dither_grayscale_4x4(Image* image);
 void dither_grayscale_8x8(Image* image);
