@@ -2,6 +2,12 @@
 
 #include <math.h>
 
+int mat2[2][2] = 
+{
+    {0, 2},
+    {3, 1}
+};
+
 int mat4[4][4] = 
 {
     {0, 8, 2, 10},
@@ -22,6 +28,30 @@ int mat8[8][8] =
     {15, 47, 7, 39, 13, 45, 5, 37},
     {63, 31, 55, 23, 61, 29, 53, 21}
 };
+
+// Grayscale dithering
+
+void dither_grayscale_2x2(Image* image)
+{
+    int w = image->dibHeader->width;
+    int h = image->dibHeader->height;
+
+    for (int y = 0; y < h; y++)
+    {
+        for (int x = 0; x < w; x++)
+        {
+            Pixel* pixel = pixel_at(image, x, y);
+
+            int value = (pixel->r + pixel->g + pixel->b) / 3;
+            float normValue = value / 255.f;
+            int newValue = (normValue < ((1.f/4) * (float)mat2[x % 2][y % 2])) ? 0 : 255;
+
+            pixel->r = newValue;
+            pixel->g = newValue;
+            pixel->b = newValue;
+        }
+    }
+}
 
 void dither_grayscale_4x4(Image* image)
 {
@@ -66,6 +96,8 @@ void dither_grayscale_8x8(Image* image)
         }
     }
 }
+
+// Testing
 
 int distance(int x1, int y1, int x2, int y2)
 {
